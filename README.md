@@ -1,33 +1,107 @@
 # Final Project Assignment 2: Explore One More! (FP2) 
 DUE March 30, 2015 Monday (2015-03-30)
 
-This is just like FP1, but where you do a different library. (Full description of FP1 is [on Piazza.][piazza])
 
-During this assignment, you should start looking for teammates. See the project schedule [on Piazza.][schedule]
-
-Write your report right in this file. Instructions are below. You can delete them if you like, or just leave them at the bottom.
-You are allowed to change/delete anything in this file to make it into your report. It will be public.
-
-This file is formatted with the [**markdown** language][markdown], so take a glance at how that works.
-
-This file IS your report for the assignment, including code and your story.
-
-Code is super easy in markdown, which you can easily do inline `(require net/url)` or do in whole blocks:
-```
-#lang racket
-
-(require net/url)
-```
-
-### My Library: (library name here)
+### My Library: Racket Graphical Interface Toolkit, racket/gui/base
 Write what you did!
 Remember that this report must include:
  
-* a narrative of what you did
+* a narrative of what you did:
+<br />
+In this library exploration assignment, I played around GUI library. I tried creating windows; buttons, canvas, dialog, panel, message boxes, checkboxes and etc. I didn’t create something that makes sense as whole but instead tried the run the little code pieces given in the documentation, and modified their data (labels etc.) mostly. I really enjoyed playing with GUI library, and am considering to use it in the final project.
 * the code that you wrote
-* output from your code demonstrating what it produced
-* any diagrams or figures explaining your work 
+```
+#lang racket/gui
+(require racket/gui/base)
+
+(define frame (new frame% [label "Merve"]))
+(send frame show #t)
+(define msg (new message% [parent frame]
+                          [label "Hello! This is FP2!"]))
+
+(new button% [parent frame]
+              [label "Click me"]
+              [callback (lambda (button event)
+                          (send msg set-label "Tadaaaa"))])
+
+(send frame show #t)
+
+(define my-canvas%
+  (class canvas% 
+    (define/override (on-event event)
+      (send msg set-label "Canvas mouse"))
+    (define/override (on-char event)
+      (send msg set-label "Canvas keyboard"))
+    (super-new)))
+(new my-canvas% [parent frame])
+
+(new button% [parent frame]
+             [label "Pause"]
+             [callback (lambda (button event) (sleep 5))])
+
+(define panel (new horizontal-panel% [parent frame]))
+(new button% [parent panel]
+             [label "Left"]
+             [callback (lambda (button event)
+                         (send msg set-label "Left click!"))])
+(new button% [parent panel]
+             [label "Right"]
+             [callback (lambda (button event)
+                         (send msg set-label "Right click!"))])
+
+(define frame2 (new frame%
+                   [label "Example"]
+                   [width 400]
+                   [height 400]))
+(new canvas% [parent frame2]
+             [paint-callback
+              (lambda (canvas dc)
+                (send dc set-scale 3 3)
+                (send dc set-text-foreground "blue")
+                (send dc draw-text "This is Frame2!" 0 0))])
+(send frame2 show #t)
+
+
+; Create a dialog
+(define dialog (instantiate dialog% ("First Dialog Box")))
  
+(new text-field% [parent dialog] [label "Your name"])
+ 
+(define panel2 (new horizontal-panel% [parent dialog]
+                                     [alignment '(center center)]))
+ 
+(new button% [parent panel2] [label "Cancel"])
+(new button% [parent panel2] [label "Ok"])
+(when (system-position-ok-before-cancel?)
+  (send panel2 change-children reverse))
+ 
+(send dialog show #t)
+
+(define check-box (new check-box%
+                       (parent panel)
+                       (label "New Check Box")
+                       (value #t)))
+
+(define choice (new choice%
+                    (label "Choice")
+                    (parent panel)
+                    (choices (list "Item 0" "Item 1" "Item 2"))))
+
+
+(define tab-panel (new tab-panel%
+                       (parent panel)
+                       (choices (list "Tab 0"
+                                      "Tab 1"
+                                      "Tab 2"))))
+
+```
+* output from your code demonstrating what it produced
+<br />
+Sample picture of output: [output1](http://imgur.com/lD8Ac0Y)
+<br />
+Another sample picture: [output2](http://imgur.com/Zv8w5xr)
+
+
 The narrative itself should be no longer than 350 words. Yes, you can add more files and link or refer to them. This is github, handling files is awesome and easy!
 
 Ask questions publicly in the Piazza group.
